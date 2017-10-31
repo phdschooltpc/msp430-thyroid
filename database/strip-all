@@ -1,0 +1,15 @@
+#!/bin/bash
+################################################################################
+
+if [ "$#" -lt 2 ]; then
+	echo "Missing input files! Usage:"
+	echo "$0 <train_file.net> <test_file.test> [number_of_tests]"
+	exit
+fi
+
+STRIP_TRAIN_CMD="./strip-train-data"
+STRIP_TEST_CMD="./strip-test-data"
+
+$STRIP_TRAIN_CMD $1
+
+$STRIP_TEST_CMD ${@:2}

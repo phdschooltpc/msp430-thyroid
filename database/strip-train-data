@@ -1,0 +1,114 @@
+#!/bin/bash
+################################################################################
+
+# parse command line arguments
+
+if [ "$#" -lt 1 ]; then
+	echo "Missing input file! Usage:"
+	echo "$0 <train_file.net>"
+	exit
+fi
+
+TRAIN_FILE="$1"
+
+TRAIN_HEADER_NAME="${TRAIN_FILE%.*}"
+TRAIN_HEADER_FILE="${TRAIN_HEADER_NAME}.h"
+
+NEURONS_NAME="neurons"
+NEURONS_TYPE="fann_type"
+
+CONNECTIONS_NAME="connections"
+CONNECTIONS_TYPE="fann_type"
+
+################################################################################
+
+# start preprocessor directives
+
+printf "#ifndef " > $TRAIN_HEADER_FILE
+printf "__%s__\n" "$TRAIN_HEADER_NAME" | tr '/a-z/' '/A-Z/' >> $TRAIN_HEADER_FILE
+printf "#define " >> $TRAIN_HEADER_FILE
+printf "__%s__\n" "$TRAIN_HEADER_NAME" | tr '/a-z/' '/A-Z/' >> $TRAIN_HEADER_FILE
+printf "\n\n" >> $TRAIN_HEADER_FILE
+
+################################################################################
+
+# parse .net file
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+
+	if [[ $line == *"FANN"* ]]; then
+		# version
+		printf "// %s\n\n" "$line" >> $TRAIN_HEADER_FILE
+
+	elif [[ $line == *"cascade_activation_functions="* ]]; then
+		idx=1
+		functions=${line#*=}
+		for f in $functions; do
+			printf "#define " >> $TRAIN_HEADER_FILE
+			printf "%-36s %s\n" "CASCADE_ACTIVATION_FUNCTION_$idx" "$f" >> $TRAIN_HEADER_FILE
+			((idx++))
+		done
+
+	elif [[ $line == *"cascade_activation_steepnesses="* ]]; then
+		idx=1
+		functions=${line#*=}
+		for f in $functions; do
+			printf "#define " >> $TRAIN_HEADER_FILE
+			printf "%-36s %s\n" "CASCADE_ACTIVATION_STEEPNESS_$idx" "$f" >> $TRAIN_HEADER_FILE
+			((idx++))
+		done
+
+	elif [[ $line == *"layer_sizes="* ]]; then
+		idx=1
+		functions=${line#*=}
+		for f in $functions; do
+			printf "#define " >> $TRAIN_HEADER_FILE
+			printf "%-36s %s\n" "LAYER_SIZE_$idx" "$f" >> $TRAIN_HEADER_FILE
+			((idx++))
+		done
+
+	elif [[ $line == *"$NEURONS_NAME"* ]]; then
+		# start neurons array
+		printf "\n" >> $TRAIN_HEADER_FILE
+		printf "%s %s[][3] = {\n" "$NEURONS_TYPE" "$NEURONS_NAME" >> $TRAIN_HEADER_FILE
+		# copy neurons array
+		ARRAY_STRING=${line#*=}
+		printf "%s" "$ARRAY_STRING" >> $TRAIN_HEADER_FILE
+		# end neurons array
+		printf "\n};\n\n" >> $TRAIN_HEADER_FILE
+
+	elif [[ $line == *"$CONNECTIONS_NAME"* ]]; then
+		# start connections array
+		printf "%s %s[][2] = {\n" "$CONNECTIONS_TYPE" "$CONNECTIONS_NAME" >> $TRAIN_HEADER_FILE
+		# copy connections array
+		ARRAY_STRING=${line#*=}
+		printf "%s" "$ARRAY_STRING" >> $TRAIN_HEADER_FILE
+		# end connections array
+		printf "\n};\n\n" >> $TRAIN_HEADER_FILE
+
+	else
+		# parse defines
+		VAR_NAME=${line%=*}
+		VAR_VALUE=${line#*=}
+		printf "#define " >> $TRAIN_HEADER_FILE
+		printf "%-36s %s\n" "${VAR_NAME}" "$VAR_VALUE" | tr '/a-z/' '/A-Z/' >> $TRAIN_HEADER_FILE
+	
+	fi
+
+done < $TRAIN_FILE
+
+################################################################################
+
+# fix arrays representation
+
+sed -i '' -e $'s/) (/},\\\n    {/g' $TRAIN_HEADER_FILE
+sed -i '' -e "s/(/    {/g" $TRAIN_HEADER_FILE
+sed -i '' -e "s/)/}/g" $TRAIN_HEADER_FILE
+
+################################################################################
+
+# end preprocessor directives
+
+printf "\n" >> $TRAIN_HEADER_FILE
+printf "#endif // " >> $TRAIN_HEADER_FILE
+printf "__%s__\n" "$TRAIN_HEADER_NAME" |  tr '/a-z/' '/A-Z/' >> $TRAIN_HEADER_FILE

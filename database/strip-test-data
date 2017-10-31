@@ -1,0 +1,141 @@
+#!/bin/bash
+################################################################################
+
+# parse command line arguments
+
+if [ "$#" -lt 1 ]; then
+	echo "Missing input file! Usage:"
+	echo "$0 <test_file.test> [number_of_tests]"
+	exit
+fi
+
+TEST_FILE="$1"
+
+TEST_HEADER_NAME="${TEST_FILE%.*}_test"
+TEST_HEADER_FILE="${TEST_HEADER_NAME}.h"
+
+IN_NAME="input"
+IN_TYPE="fann_type"
+
+OUT_NAME="output"
+OUT_TYPE="fann_type"
+
+################################################################################
+
+# start preprocessor directives
+
+printf "#ifndef " > $TEST_HEADER_FILE
+printf "__%s__\n" "$TEST_HEADER_NAME" | tr '/a-z/' '/A-Z/' >> $TEST_HEADER_FILE
+printf "#define " >> $TEST_HEADER_FILE
+printf "__%s__\n" "$TEST_HEADER_NAME" | tr '/a-z/' '/A-Z/' >> $TEST_HEADER_FILE
+printf "\n" >> $TEST_HEADER_FILE
+printf "#include <stdint.h>\n" >> $TEST_HEADER_FILE
+printf "\n\n" >> $TEST_HEADER_FILE
+
+################################################################################
+
+# parse .test file
+
+first=1
+read_in=1
+in_count=0
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+
+	if [[ $first == "1" ]]; then
+		first=0
+		idx=1
+		for n in $line; do
+			if [[ $idx == "1" ]]; then
+				var_name="num_data"
+				if [ "$#" == 2 ]; then
+					n="$2"
+				fi
+				NUM_DATA="$n"
+				((idx++))
+			elif [[ $idx == "2" ]]; then
+				var_name="num_input"
+				NUM_INPUT="$n"
+				((idx++))
+			else
+				var_name="num_output"
+				NUM_OUTPUT="$n"
+			fi
+			printf "uint8_t %s = %s;\n" "$var_name" "$n" >> $TEST_HEADER_FILE
+		done
+		printf "\n" >> $TEST_HEADER_FILE
+		printf "#pragma PERSISTENT(%s) // Place data in FRAM\n" "${IN_NAME}" >> $TEST_HEADER_FILE
+		printf "%s %s [%s][%s] = {\n" "$IN_TYPE" "$IN_NAME" "$NUM_DATA" "$NUM_INPUT" >> $TEST_HEADER_FILE
+	else
+		if [[ $read_in == "1" ]]; then
+			((in_count++))
+			first_num=1
+			for n in $line; do
+				if [[ $first_num == "0" ]]; then
+					printf ", %s" "$n" >> $TEST_HEADER_FILE
+				else
+					printf "    {%s" "$n" >> $TEST_HEADER_FILE
+					first_num=0
+				fi
+			done
+			if [[ $in_count == $NUM_DATA ]]; then
+				printf "}\n" >> $TEST_HEADER_FILE
+				break;
+			else
+				printf "},\n" >> $TEST_HEADER_FILE
+			fi
+			read_in=0
+		else
+			read_in=1
+		fi
+	fi
+
+done < $TEST_FILE
+
+printf "};\n\n" >> $TEST_HEADER_FILE
+
+first=1
+read_in=1
+out_count=0
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+
+	if [[ $first == "1" ]]; then
+		first=0
+		printf "#pragma PERSISTENT(%s) // Place data in FRAM\n" "${OUT_NAME}" >> $TEST_HEADER_FILE
+		printf "%s %s [%s][%s] = {\n" "$OUT_TYPE" "$OUT_NAME" "$NUM_DATA" "$NUM_OUTPUT" >> $TEST_HEADER_FILE
+	else
+		if [[ $read_in == "1" ]]; then
+			read_in=0
+		else
+			((out_count++))
+			first_num=1
+			for n in $line; do
+				if [[ $first_num == "0" ]]; then
+					printf ", %s" "$n" >> $TEST_HEADER_FILE
+				else
+					printf "    {%s" "$n" >> $TEST_HEADER_FILE
+					first_num=0
+				fi
+			done
+			if [[ $out_count == $NUM_DATA ]]; then
+				printf "}\n" >> $TEST_HEADER_FILE
+				break;
+			else
+				printf "},\n" >> $TEST_HEADER_FILE
+			fi
+			read_in=1
+		fi
+	fi
+
+done < $TEST_FILE
+
+printf "};\n\n" >> $TEST_HEADER_FILE
+
+################################################################################
+
+# end preprocessor directives
+
+printf "\n" >> $TEST_HEADER_FILE
+printf "#endif // " >> $TEST_HEADER_FILE
+printf "__%s__\n" "$TEST_HEADER_NAME" | tr '/a-z/' '/A-Z/' >> $TEST_HEADER_FILE
