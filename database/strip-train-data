@@ -11,6 +11,11 @@ fi
 
 TRAIN_FILE="$1"
 
+if ! [ -e "$1" ]; then
+	echo "$1: no such file"
+	exit
+fi
+
 TRAIN_HEADER_NAME="${TRAIN_FILE%.*}"
 TRAIN_HEADER_FILE="${TRAIN_HEADER_NAME}.h"
 
@@ -91,7 +96,8 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 		VAR_NAME=${line%=*}
 		VAR_VALUE=${line#*=}
 		printf "#define " >> $TRAIN_HEADER_FILE
-		printf "%-36s %s\n" "${VAR_NAME}" "$VAR_VALUE" | tr '/a-z/' '/A-Z/' >> $TRAIN_HEADER_FILE
+		printf "%-36s " "${VAR_NAME}" | tr '/a-z/' '/A-Z/' >> $TRAIN_HEADER_FILE
+		printf "%s\n" "$VAR_VALUE" >> $TRAIN_HEADER_FILE
 	
 	fi
 

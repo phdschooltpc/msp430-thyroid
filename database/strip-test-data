@@ -11,6 +11,11 @@ fi
 
 TEST_FILE="$1"
 
+if ! [ -e "$1" ]; then
+	echo "$1: no such file"
+	exit
+fi
+
 TEST_HEADER_NAME="${TEST_FILE%.*}_test"
 TEST_HEADER_FILE="${TEST_HEADER_NAME}.h"
 

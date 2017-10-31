@@ -7,6 +7,16 @@ if [ "$#" -lt 2 ]; then
 	exit
 fi
 
+if ! [ -e "$1" ]; then
+	echo "$1: no such file"
+	exit
+fi
+
+if ! [ -e "$2" ]; then
+	echo "$2: no such file"
+	exit
+fi
+
 STRIP_TRAIN_CMD="./strip-train-data"
 STRIP_TEST_CMD="./strip-test-data"
 

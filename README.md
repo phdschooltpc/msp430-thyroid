@@ -4,7 +4,7 @@ Machine learning example running on MSP430, _not_ intermittent-safe.
 
 ### How to use
 
-Just clone/download the repository and import the project in CCS.
+Just clone/download the repository and import the project in CCS, build and run.
 
 ### Program
 
@@ -22,5 +22,11 @@ The `.data` file contains 3600 tests, which is the maximum value for `number_of_
 
 ### Suggestions
 
-1. first suggestion
-2. second suggestion
+Have a look at the code, then:
+
+1. Try to spot things that can be optimised, since execution time is crucial for an intermittently-powered device.
+2. Try to think of a possible approach for splitting the program in different tasks<sup>1</sup>, or any suitable solution for it to run consistently on a transiently-powered system.
+
+Note: some optimisations may lead to loss in accuracy (e.g. fixed- instead of floating-points), take it into account.
+
+<sup>1</sup>A sample taskified program will be provided soon. It will serve as a tutorial to use the intermittent-safe library we will provide you.
