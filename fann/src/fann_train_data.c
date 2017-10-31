@@ -33,34 +33,22 @@ struct fann_train_data *fann_read_test_msp430()
     // uint8_t i, j;
     struct fann_train_data *data;
 
-    // TODO: get rid of dynamic allocation
-    // data = fann_create_train(num_data, num_input, num_output);
-    // if(data == NULL) {
-    //     return NULL;
-    // }
+    /* Dynamically allocated test database. */
+
+    data = fann_create_train(num_data, num_input, num_output);
+    if(data == NULL) {
+        return NULL;
+    }
     
-    // for(i = 0; i != num_data; i++) {
-    //     for(j = 0; j != num_input; j++) {
-    //         data->input[i][j] = input[i][j];
-    //     }
+    for(i = 0; i != num_data; i++) {
+        for(j = 0; j != num_input; j++) {
+            data->input[i][j] = input[i][j];
+        }
 
-    //     for(j = 0; j != num_output; j++) {
-    //         data->output[i][j] = output[i][j];
-    //     }
-    // }
-
-    // data = (struct fann_train_data*) malloc(sizeof(struct fann_train_data));
-    // if(data == NULL) {
-    //     // fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
-    //     return NULL;
-    // }
-
-    // data->num_data = num_data;
-    // data->num_input = num_input;
-    // data->num_output = num_output;
-
-    // data->input = input;
-    // data->output = output;
+        for(j = 0; j != num_output; j++) {
+            data->output[i][j] = output[i][j];
+        }
+    }
 
     return data;
 }

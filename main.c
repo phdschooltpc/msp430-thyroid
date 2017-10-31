@@ -3,13 +3,22 @@
 
 #include "thyroid_test.h"
 
+// TODO: add profiling facilities
+// TODO: remove unnecessary functions
+
 /**
  * main.c
  */
 int main(void)
 {
-	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
+    /* Stop watchdog timer. */
+    WDTCTL = WDTPW | WDTHOLD;
+
+    /* Prepare LED. */
+    P1DIR |= BIT0;
+    P1OUT &= ~BIT0;
 	
+    /* Set master clock frequency to 8 MHz. */
     CSCTL0 = CSKEY;
     CSCTL1 &= ~DCOFSEL;
     CSCTL1 |= DCOFSEL_6;
@@ -29,37 +38,30 @@ int main(void)
         return -1;
     }
 
-    /* Assign testing data. */
-    // data = fann_create_tests_from_header();
-
     /* Reset Mean Square Error. */
     fann_reset_MSE(ann);
 
     /* Run tests. */
-    // for (i = 0; i < fann_length_train_data(data); i++) {
-    //     calc_out = fann_test(ann, data->input[i], data->output[i]);
-    //     printf("TT: %f should be %f, difference = %f\n",
-    //             calc_out[0], data->output[i][0],
-    //             (float) fann_abs(calc_out[0] - data->output[i][0]));
-    // }
     for (i = 0; i < num_data; i++) {
         calc_out = fann_test(ann, input[i], output[i]);
-        // printf("TT: %f should be %f, difference = %f\n",
-        //         calc_out[2], output[i][2],
-        //         (float) fann_abs(calc_out[2] - output[i][2]));
+#ifdef DEBUG
+        /* Print one of the three results ([0] or [1] or [2]). */
+        printf("Test result: %f, expected: %f, difference = %f\n",
+                calc_out[2], output[i][2],
+                (float) fann_abs(calc_out[2] - output[i][2]));
     }
+#endif // DEBUG
 
     /* Print error. */
-    // printf("MSE error on %d test data: %f\n", fann_length_train_data(data), fann_get_MSE(ann));
     printf("MSE error on %d test data: %f\n", num_data, fann_get_MSE(ann));
 
     /* Clean-up. */
-    // fann_destroy_train(data); // TODO: take care when removing mallocs
-    fann_destroy(ann);        // TODO: take care when removing mallocs
+    fann_destroy(ann);
 
     __no_operation();
 
-    // TODO: blink a LED
+    /* Turn on LED. */
+    P1OUT |= BIT0;
 
-	return 0;
+    return 0;
 }

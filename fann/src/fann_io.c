@@ -102,10 +102,10 @@ struct fann *fann_create_msp430()
         fann_destroy(ann);
         return NULL;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Re-allocated %u bytes for activation functions.\n",
             ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 
     // TODO: [not urgent] dynamically parse activation functions (macro)
     uint8_t cascade_activation_functions[]= { 
@@ -135,10 +135,10 @@ struct fann *fann_create_msp430()
         fann_destroy(ann);
         return NULL;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Re-allocated %u bytes for activation steepnesses.\n",
             ann->cascade_activation_steepnesses_count * sizeof(fann_type));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 
     // TODO: [not urgent] dynamically parse activation steepnesses (macro)
     uint16_t cascade_activation_steepnesses[] = {
@@ -156,10 +156,10 @@ struct fann *fann_create_msp430()
     fann_update_stepwise(ann);
 #endif // FIXEDFANN
 
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Creating network with %d layers\n", num_layers);
     printf("Input\n");
-#endif // DEBUG
+#endif // DEBUG_MALLOC
     
     i = 0;
 
@@ -176,13 +176,13 @@ struct fann *fann_create_msp430()
         layer_it->first_neuron = NULL;
         layer_it->last_neuron = layer_it->first_neuron + layer_size;
         ann->total_neurons += layer_size;
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
         if (ann->network_type == FANN_NETTYPE_SHORTCUT && layer_it != ann->first_layer) {
             printf("  layer       : %d neurons, 0 bias\n", layer_size);
         } else {
             printf("  layer       : %d neurons, 1 bias\n", layer_size - 1);
         }
-#endif // DEBUG
+#endif // DEBUG_MALLOC
     }
 
     ann->num_input = (unsigned int) (ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1);

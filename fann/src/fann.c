@@ -33,9 +33,9 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
         // fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
         return NULL;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Allocated %u bytes for ann.\n", sizeof(struct fann));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 
     ann->errno_f = FANN_E_NO_ERROR;
     ann->error_log = fann_default_error_log;
@@ -159,9 +159,9 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
         free(ann);
         return NULL;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Allocated %u bytes for the layers.\n", num_layers * sizeof(struct fann_layer));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 
     ann->last_layer = ann->first_layer + num_layers;
 
@@ -219,9 +219,9 @@ void fann_allocate_neurons(struct fann *ann)
         //fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
         return;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Allocated %u bytes for neurons.\n", ann->total_neurons * sizeof(struct fann_neuron));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 
     for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
     {
@@ -249,9 +249,9 @@ void fann_allocate_connections(struct fann *ann)
         // fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
         return;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Allocated %u bytes for weights.\n", ann->total_connections * sizeof(fann_type));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 
     ann->total_connections_allocated = ann->total_connections;
 
@@ -266,10 +266,10 @@ void fann_allocate_connections(struct fann *ann)
         // fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
         return;
     }
-#ifdef DEBUG
+#ifdef DEBUG_MALLOC
     printf("Allocated %u bytes for connections.\n", 
             ann->total_connections_allocated * sizeof(struct fann_neuron *));
-#endif // DEBUG
+#endif // DEBUG_MALLOC
 }
 
 FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
