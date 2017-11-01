@@ -8,7 +8,7 @@ Just clone/download the repository and import the project in CCS, build and run.
 
 ### Program
 
-The main function _dynamically_ allocates an Artificial Neural Network (ANN) using network parameters provided in `database/thyroid_trained.h`. This header file is constructed from `database/thyroid_trained.net`. If you are familiar with some machine learning concepts, you may try to tweak network parameters in the `.net` file, and re-generate the header file using the provided script as follows:
+The main function _dynamically_ allocates an Artificial Neural Network (ANN) using network parameters provided in `database/thyroid_trained.h`. This header file is constructed from `database/thyroid_trained.net`. If you are familiar with some machine learning concepts, you may try to tweak network parameters and re-train the network using the example in the other repository (__TODO__: add example `phdschooltpc/fann-thyroid`). Grab the resulting `.net` file, and re-generate the header file using the provided script as follows:
 
 ```bash
 cd database
@@ -22,7 +22,7 @@ cd database
 ./strip-test-data thyroid.test [number_of_tests]
 ```
 
-The `.data` file contains 3600 tests, which is the maximum value for `number_of_tests`. Currently, 250 tests are uploaded, on the FRAM, and run. The more tests, the more accurate the Mean Square Error (MSE) for the network. Nevertheless, the FRAM is limited in size, so all the 3600 tests will not fit. During the evaluation of your work, a fixed amount of tests will be run.
+The `.test` file contains 3600 tests, which is the maximum value for `number_of_tests`. Currently, 250 tests are uploaded, on the FRAM, and run. The more tests, the more accurate the Mean Square Error (MSE) for the network. Nevertheless, the FRAM is limited in size, so all the 3600 tests will not fit. During the evaluation of your work, a fixed amount of tests will be run.
 
 ### Suggestions
 
