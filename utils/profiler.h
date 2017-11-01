@@ -9,7 +9,7 @@
 #define ISR_OVERHEAD 11 // Cycles needed to switch to interrupt and back
                         // Source: http://www.ti.com/lit/ug/slau367n/slau367n.pdf (pp. 52-53)
 
-#define ISR_CYCLES   17 // Cycles spent inside IRS (measured)
+#define ISR_CYCLES   17 // Cycles spent inside ISR (measured)
 
 
 /**
