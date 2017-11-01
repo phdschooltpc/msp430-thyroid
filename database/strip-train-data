@@ -107,9 +107,9 @@ done < $TRAIN_FILE
 
 # fix arrays representation
 
-sed -i '' -e $'s/) (/},\\\n    {/g' $TRAIN_HEADER_FILE
-sed -i '' -e "s/(/    {/g" $TRAIN_HEADER_FILE
-sed -i '' -e "s/)/}/g" $TRAIN_HEADER_FILE
+sed -i'' -e $'s/) (/},\\\n    {/g' $TRAIN_HEADER_FILE
+sed -i'' -e "s/(/    {/g" $TRAIN_HEADER_FILE
+sed -i'' -e "s/)/}/g" $TRAIN_HEADER_FILE
 
 ################################################################################
 
