@@ -5,6 +5,7 @@
 
 // TODO: add profiling facilities
 // TODO: remove unnecessary functions
+// TODO: try --data_model=full to fit more tests
 
 /**
  * main.c
@@ -49,8 +50,12 @@ int main(void)
         printf("Test result: %f, expected: %f, difference = %f\n",
                 calc_out[2], output[i][2],
                 (float) fann_abs(calc_out[2] - output[i][2]));
-    }
+#else
+        /* Breakpoint here and check the difference between calc_out[k] and
+         * output[i][k], with k = 0, 1, 2. */
+        __no_operation();
 #endif // DEBUG
+    }
 
     /* Print error. */
     printf("MSE error on %d test data: %f\n", num_data, fann_get_MSE(ann));
