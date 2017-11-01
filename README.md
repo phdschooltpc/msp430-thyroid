@@ -8,7 +8,7 @@ Just clone/download the repository and import the project in CCS, build and run.
 
 ### Program
 
-The main function _dynamically_ allocates an Artificial Neural Network (ANN) using network parameters provided in `database/thyroid_trained.h`. This header file is constructed from `database/thyroid_trained.net`. If you are familiar with some machine learning concepts, you may try to tweak network parameters and re-train the network using [FANN][https://github.com/libfann/fann]. Grab the resulting `.net` file, put it inside the `database` folder and re-generate the header file using the provided script as follows:
+The main function _dynamically_ allocates an Artificial Neural Network (ANN) using network parameters provided in `database/thyroid_trained.h`. This header file is constructed from `database/thyroid_trained.net`. If you are familiar with some machine learning concepts, you may try to tweak network parameters and re-train the network using [FANN][FANN-LINK]. Grab the resulting `.net` file, put it inside the `database` folder and re-generate the header file using the provided script as follows:
 
 ```bash
 cd database
@@ -34,3 +34,5 @@ Have a look at the code, then:
 Note: some optimisations may lead to loss in accuracy (e.g. fixed- instead of floating-points), take it into account.
 
 <sup>1</sup>A sample taskified program will be provided soon. It will serve as a tutorial to use the intermittent-safe library we will provide you.
+
+[FANN_LINK]: https://github.com/libfann/fann
