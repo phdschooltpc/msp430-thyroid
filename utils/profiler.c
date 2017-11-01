@@ -32,7 +32,7 @@ uint32_t profiler_stop()
 {
     cycle_count += TA0R;
     TA0CTL = 0;
-    uint16_t number_of_isr = cycle_count / TIMER_PERIOD;
+    uint32_t number_of_isr = cycle_count / TIMER_PERIOD;
     cycle_count -= number_of_isr * (ISR_OVERHEAD + ISR_CYCLES);
     return cycle_count;
 }
