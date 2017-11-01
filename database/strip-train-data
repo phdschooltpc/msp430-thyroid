@@ -107,9 +107,15 @@ done < $TRAIN_FILE
 
 # fix arrays representation
 
-sed -i'' -e $'s/) (/},\\\n    {/g' $TRAIN_HEADER_FILE
-sed -i'' -e "s/(/    {/g" $TRAIN_HEADER_FILE
-sed -i'' -e "s/)/}/g" $TRAIN_HEADER_FILE
+if [[ $OSTYPE == darwin* ]]; then
+	sed -i '' -e $'s/) (/},\\\n    {/g' $TRAIN_HEADER_FILE
+	sed -i '' -e "s/(/    {/g" $TRAIN_HEADER_FILE
+	sed -i '' -e "s/)/}/g" $TRAIN_HEADER_FILE
+else
+	sed -i'' -e $'s/) (/},\\\n    {/g' $TRAIN_HEADER_FILE
+	sed -i'' -e "s/(/    {/g" $TRAIN_HEADER_FILE
+	sed -i'' -e "s/)/}/g" $TRAIN_HEADER_FILE
+fi
 
 ################################################################################
 
