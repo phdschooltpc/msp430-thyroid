@@ -1,6 +1,6 @@
 # Thyroid disease example for MSP430
 
-Machine learning example running on MSP430, _not_ intermittent-safe.
+Machine learning example running on MSP430, _not_ intermittent-safe. It currently uses _floating-points_.
 
 ### How to use
 
