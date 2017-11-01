@@ -93,6 +93,7 @@ struct fann *fann_create_msp430()
     ann->cascade_weight_multiplier = CASCADE_WEIGHT_MULTIPLIER;
 
     ann->cascade_activation_functions_count = CASCADE_ACTIVATION_FUNCTIONS_COUNT;
+    // WARNING: dynamic allocation!
     ann->cascade_activation_functions = (enum fann_activationfunc_enum *) realloc(
         ann->cascade_activation_functions,
         ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum)
@@ -126,6 +127,7 @@ struct fann *fann_create_msp430()
     }
 
     ann->cascade_activation_steepnesses_count = CASCADE_ACTIVATION_STEEPNESSES_COUNT;
+    // WARNING: dynamic allocation!
     ann->cascade_activation_steepnesses = (fann_type *) realloc(
         ann->cascade_activation_steepnesses,
         ann->cascade_activation_steepnesses_count * sizeof(fann_type)
@@ -156,10 +158,10 @@ struct fann *fann_create_msp430()
     fann_update_stepwise(ann);
 #endif // FIXEDFANN
 
-#ifdef DEBUG_MALLOC
+#ifdef DEBUG
     printf("Creating network with %d layers\n", num_layers);
     printf("Input\n");
-#endif // DEBUG_MALLOC
+#endif // DEBUG
     
     i = 0;
 
@@ -176,13 +178,13 @@ struct fann *fann_create_msp430()
         layer_it->first_neuron = NULL;
         layer_it->last_neuron = layer_it->first_neuron + layer_size;
         ann->total_neurons += layer_size;
-#ifdef DEBUG_MALLOC
+#ifdef DEBUG
         if (ann->network_type == FANN_NETTYPE_SHORTCUT && layer_it != ann->first_layer) {
             printf("  layer       : %d neurons, 0 bias\n", layer_size);
         } else {
             printf("  layer       : %d neurons, 1 bias\n", layer_size - 1);
         }
-#endif // DEBUG_MALLOC
+#endif // DEBUG
     }
 
     ann->num_input = (unsigned int) (ann->first_layer->last_neuron - ann->first_layer->first_neuron - 1);
@@ -222,8 +224,7 @@ struct fann *fann_create_msp430()
 #endif
 */
 
-    // TODO: get rid of dynamic allocation
-    /* Allocate room for the neurons. */
+    // WARNING: dynamic allocation!
     fann_allocate_neurons(ann);
     if (ann->errno_f == FANN_E_CANT_ALLOCATE_MEM) {
         fann_destroy(ann);
@@ -245,8 +246,7 @@ struct fann *fann_create_msp430()
         neuron_it->last_con = ann->total_connections;
     }
 
-    // TODO: get rid of dynamic allocation
-    /* Allocate room for the connections. */
+    // WARNING: dynamic allocation!
     fann_allocate_connections(ann);
     if(ann->errno_f == FANN_E_CANT_ALLOCATE_MEM) {
         fann_destroy(ann);

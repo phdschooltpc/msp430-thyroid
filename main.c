@@ -1,11 +1,20 @@
 #include <msp430.h>
-#include <fann.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdint.h>
+
+#include "fann.h"
 
 #include "thyroid_test.h"
 
 // TODO: add profiling facilities
 // TODO: remove unnecessary functions
 // TODO: try --data_model=full to fit more tests
+
+/* Debug variable. */
+fann_type *calc_out;
 
 /**
  * main.c
@@ -16,6 +25,8 @@ int main(void)
     WDTCTL = WDTPW | WDTHOLD;
 
     /* Prepare LED. */
+    PM5CTL0 &= ~LOCKLPM5; // Disable the GPIO power-on default high-impedance mode
+                          // to activate previously configured port settings
     P1DIR |= BIT0;
     P1OUT &= ~BIT0;
 	
@@ -27,10 +38,6 @@ int main(void)
 
 	/* Fann structures. */
     struct fann *ann;
-    struct fann_train_data *data;
-
-    /* Test-related variables. */
-    fann_type *calc_out;
     unsigned int i;
 
     /* Create network and read training data. */
@@ -46,9 +53,16 @@ int main(void)
     for (i = 0; i < num_data; i++) {
         calc_out = fann_test(ann, input[i], output[i]);
 #ifdef DEBUG
-        /* Print one of the three results ([0] or [1] or [2]). */
-        printf("Test result: %f, expected: %f, difference = %f\n",
-                calc_out[2], output[i][2],
+        /* Print results and errors (very expensive operations). */
+        printf("Test %u:\n"
+               "  result = (%f, %f, %f)\n"
+               "expected = (%f, %f, %f)\n"
+               "   delta = (%f, %f, %f)\n\n",
+                i + 1,
+                calc_out[0], calc_out[1], calc_out[2],
+                output[i][0], output[i][1], output[i][2],
+                (float) fann_abs(calc_out[0] - output[i][0]),
+                (float) fann_abs(calc_out[1] - output[i][1]),
                 (float) fann_abs(calc_out[2] - output[i][2]));
 #else
         /* Breakpoint here and check the difference between calc_out[k] and

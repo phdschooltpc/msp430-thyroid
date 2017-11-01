@@ -35,12 +35,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
    every part of the ANNs can be parametrized to create specialized and highly optimal ANNs.
  */
 /* Group: Creation, Destruction & Execution */
-#define FANN_INCLUDE
-//#define FIXEDFANN
-#include <stdint.h>
 
-//typedef int32_t fann_type;
+#ifdef FIXEDFANN
+typedef long fann_type;
+#else
 typedef float fann_type;
+#endif
+
+// Leftover from original FANN library
+#define FANN_INCLUDE
 #ifndef FANN_INCLUDE
 /* just to allow for inclusion of fann.h in normal stuations where only floats are needed */ 
 #ifdef FIXEDFANN

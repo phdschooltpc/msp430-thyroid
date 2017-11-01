@@ -17,15 +17,15 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef __fixedfann_h__
-#define __fixedfann_h__
+#ifndef __floatfann_h__
+#define __floatfann_h__
 
-typedef long fann_type;
+typedef float fann_type;
 
-#undef FIXEDFANN
-#define FIXEDFANN
-#define FANNPRINTF "%d"
-#define FANNSCANF "%d"
+#undef FLOATFANN
+#define FLOATFANN
+#define FANNPRINTF "%.20e"
+#define FANNSCANF "%f"
 
 #define FANN_INCLUDE
 #include "fann.h"

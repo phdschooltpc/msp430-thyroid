@@ -911,7 +911,7 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 #ifdef CASCADE_DEBUG_FULL
 			//printf("move weight[%d] = weight[%d]\n", i + num_connections_move - 1, i);
 #endif
-			//ann->weights[i + num_connections_move - 1] = ann->weights[i];
+			ann->weights[i + num_connections_move - 1] = ann->weights[i];
 		}
 
 		/* move the indexes to weights */
@@ -949,7 +949,7 @@ void fann_add_candidate_neuron(struct fann *ann, struct fann_layer *layer)
 
 	for(i = 0; i < (int)num_connections_in; i++)
 	{
-		//ann->weights[i + neuron_place->first_con] = ann->weights[i + candidate_con];
+		ann->weights[i + neuron_place->first_con] = ann->weights[i + candidate_con];
 #ifdef CASCADE_DEBUG_FULL
 		//printf("move weights[%d] -> weights[%d] (%f)\n", i + candidate_con,
 		//	   i + neuron_place->first_con, ann->weights[i + neuron_place->first_con]);
