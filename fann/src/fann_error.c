@@ -1,11 +1,4 @@
 /*
- * fann_error.c
- *
- *  Created on: Oct 23, 2017
- *      Author: patou
- */
-
-/*
   Fast Artificial Neural Network Library (fann)
   Copyright (C) 2003-2016 Steffen Nissen (steffen.fann@gmail.com)
 

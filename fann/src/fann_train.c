@@ -56,7 +56,11 @@ fann_type fann_update_MSE(struct fann *ann, struct fann_neuron* neuron, fann_typ
             break;
     }
 
+#ifdef FIXEDFANN
+    neuron_diff2 = (neuron_diff / (float) ann->multiplier) * (neuron_diff / (float) ann->multiplier);
+#else
     neuron_diff2 = (float) (neuron_diff * neuron_diff);
+#endif
 
     ann->MSE_value += neuron_diff2;
 

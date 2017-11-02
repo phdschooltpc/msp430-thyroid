@@ -1,9 +1,14 @@
-    /*
- * fann.c
+/*
+ *******************************************************************************
+ * fann_io.c
  *
- *  Created on: Oct 23, 2017
- *      Author: patou
+ * FANN utility functions ported for embedded devices.
+ *
+ * Created on: Oct 23, 2017
+ *    Authors: Dimitris Patoukas, Carlo Delle Donne
+ *******************************************************************************
  */
+
 #include <msp430.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,8 +27,7 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 {
     struct fann *ann;
 
-    if(num_layers < 2)
-    {
+    if (num_layers < 2) {
         return NULL;
     }
 
@@ -89,11 +93,11 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
     ann->cascade_min_cand_epochs = 50;
     ann->cascade_candidate_scores = NULL;
     ann->cascade_activation_functions_count = 10;
-    ann->cascade_activation_functions =
-        (enum fann_activationfunc_enum *)calloc(ann->cascade_activation_functions_count,
-                               sizeof(enum fann_activationfunc_enum));
-    if(ann->cascade_activation_functions == NULL)
-    {
+    ann->cascade_activation_functions = (enum fann_activationfunc_enum *) calloc(
+        ann->cascade_activation_functions_count,
+        sizeof(enum fann_activationfunc_enum)
+    );
+    if (ann->cascade_activation_functions == NULL) {
         //fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
         free(ann);
         return NULL;
@@ -111,21 +115,21 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
     ann->cascade_activation_functions[9] = FANN_COS;
 
     ann->cascade_activation_steepnesses_count = 4;
-    ann->cascade_activation_steepnesses =
-        (fann_type *)calloc(ann->cascade_activation_steepnesses_count,
-                               sizeof(fann_type));
-    if(ann->cascade_activation_steepnesses == NULL)
-    {
+    ann->cascade_activation_steepnesses = (fann_type *) calloc(
+        ann->cascade_activation_steepnesses_count,
+        sizeof(fann_type)
+    );
+    if (ann->cascade_activation_steepnesses == NULL) {
         fann_safe_free(ann->cascade_activation_functions);
         //fann_error(NULL, FANN_E_CANT_ALLOCATE_MEM);
         free(ann);
         return NULL;
     }
 
-    ann->cascade_activation_steepnesses[0] = (fann_type)0.25;
-    ann->cascade_activation_steepnesses[1] = (fann_type)0.5;
-    ann->cascade_activation_steepnesses[2] = (fann_type)0.75;
-    ann->cascade_activation_steepnesses[3] = (fann_type)1.0;
+    ann->cascade_activation_steepnesses[0] = (fann_type) 0.25;
+    ann->cascade_activation_steepnesses[1] = (fann_type) 0.5;
+    ann->cascade_activation_steepnesses[2] = (fann_type) 0.75;
+    ann->cascade_activation_steepnesses[3] = (fann_type) 1.0;
 
     /* Variables for use with with Quickprop training (reasonable defaults) */
     ann->quickprop_decay = -0.0001f;
@@ -149,8 +153,8 @@ struct fann *fann_allocate_structure(unsigned int num_layers)
 
     /* these values are only boring defaults, and should really
      * never be used, since the real values are always loaded from a file. */
-    //fann_type decimal_point = 13;
-    //fann_type multiplier = 1 << decimal_point;
+    unsigned int decimal_point = 13;
+    unsigned int multiplier = 1 << decimal_point;
 
     /* allocate room for the layers */
     ann->first_layer = (struct fann_layer *) calloc(num_layers, sizeof(struct fann_layer));
@@ -223,8 +227,7 @@ void fann_allocate_neurons(struct fann *ann)
     printf("Allocated %u bytes for neurons.\n", ann->total_neurons * sizeof(struct fann_neuron));
 #endif // DEBUG_MALLOC
 
-    for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++)
-    {
+    for (layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++) {
         num_neurons = (unsigned int) (layer_it->last_neuron - layer_it->first_neuron);
         layer_it->first_neuron = neurons + num_neurons_so_far;
         layer_it->last_neuron = layer_it->first_neuron + num_neurons;
@@ -232,11 +235,10 @@ void fann_allocate_neurons(struct fann *ann)
     }
 
     ann->output = (fann_type *) calloc(num_neurons, sizeof(fann_type));
-//    if(ann->output == NULL)
-//    {
-//        //fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
-//        return;
-//    }
+    if (ann->output == NULL) {
+        // fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
+        return;
+    }
 }
 
 /* INTERNAL FUNCTION
@@ -245,7 +247,7 @@ void fann_allocate_neurons(struct fann *ann)
 void fann_allocate_connections(struct fann *ann)
 {
     ann->weights = (fann_type *) calloc(ann->total_connections, sizeof(fann_type));
-    if(ann->weights == NULL) {
+    if (ann->weights == NULL) {
         // fann_error((struct fann_error *) ann, FANN_E_CANT_ALLOCATE_MEM);
         return;
     }
@@ -289,21 +291,17 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
 
     /* first set the input */
     num_input = ann->num_input;
-    for(i = 0; i != num_input; i++)
-    {
+    for (i = 0; i != num_input; i++) {
         first_neuron[i].value = input[i];
     }
     /* Set the bias neuron in the input layer */
     (ann->first_layer->last_neuron - 1)->value = 1;
 
     last_layer = ann->last_layer;
-    for(layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++)
-    {
+    for (layer_it = ann->first_layer + 1; layer_it != last_layer; layer_it++) {
         last_neuron = layer_it->last_neuron;
-        for(neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++)
-        {
-            if(neuron_it->first_con == neuron_it->last_con)
-            {
+        for (neuron_it = layer_it->first_neuron; neuron_it != last_neuron; neuron_it++) {
+            if (neuron_it->first_con == neuron_it->last_con) {
                 /* bias neurons */
                 neuron_it->value = 1;
                 continue;
@@ -316,34 +314,29 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
             num_connections = neuron_it->last_con - neuron_it->first_con;
             weights = ann->weights + neuron_it->first_con;
 
-            if(ann->connection_rate >= 1)
-            {
-                if(ann->network_type == FANN_NETTYPE_SHORTCUT)
-                {
+            if (ann->connection_rate >= 1) {
+                if (ann->network_type == FANN_NETTYPE_SHORTCUT) {
                     neurons = ann->first_layer->first_neuron;
                 }
-                else
-                {
+                else {
                     neurons = (layer_it - 1)->first_neuron;
                 }
 
 
                 /* unrolled loop start */
                 i = num_connections & 3;    /* same as modulo 4 */
-                switch (i)
-                {
-                    case 3:
-                        neuron_sum += fann_mult(weights[2], neurons[2].value);
-                    case 2:
-                        neuron_sum += fann_mult(weights[1], neurons[1].value);
-                    case 1:
-                        neuron_sum += fann_mult(weights[0], neurons[0].value);
-                    case 0:
-                        break;
+                switch (i) {
+                case 3:
+                    neuron_sum += fann_mult(weights[2], neurons[2].value);
+                case 2:
+                    neuron_sum += fann_mult(weights[1], neurons[1].value);
+                case 1:
+                    neuron_sum += fann_mult(weights[0], neurons[0].value);
+                case 0:
+                    break;
                 }
 
-                for(; i != num_connections; i += 4)
-                {
+                for (; i != num_connections; i += 4) {
                     neuron_sum +=
                         fann_mult(weights[i], neurons[i].value) +
                         fann_mult(weights[i + 1], neurons[i + 1].value) +
@@ -359,25 +352,22 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
                  * }
                  */
             }
-            else
-            {
+            else {
                 neuron_pointers = ann->connections + neuron_it->first_con;
 
                 i = num_connections & 3;    /* same as modulo 4 */
-                switch (i)
-                {
-                    case 3:
-                        neuron_sum += fann_mult(weights[2], neuron_pointers[2]->value);
-                    case 2:
-                        neuron_sum += fann_mult(weights[1], neuron_pointers[1]->value);
-                    case 1:
-                        neuron_sum += fann_mult(weights[0], neuron_pointers[0]->value);
-                    case 0:
-                        break;
+                switch (i) {
+                case 3:
+                    neuron_sum += fann_mult(weights[2], neuron_pointers[2]->value);
+                case 2:
+                    neuron_sum += fann_mult(weights[1], neuron_pointers[1]->value);
+                case 1:
+                    neuron_sum += fann_mult(weights[0], neuron_pointers[0]->value);
+                case 0:
+                    break;
                 }
 
-                for(; i != num_connections; i += 4)
-                {
+                for (; i != num_connections; i += 4) {
                     neuron_sum +=
                         fann_mult(weights[i], neuron_pointers[i]->value) +
                         fann_mult(weights[i + 1], neuron_pointers[i + 1]->value) +
@@ -389,9 +379,9 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
             neuron_sum = fann_mult(steepness, neuron_sum);
 
             max_sum = 150/steepness;
-            if(neuron_sum > max_sum)
+            if (neuron_sum > max_sum)
                 neuron_sum = max_sum;
-            else if(neuron_sum < -max_sum)
+            else if (neuron_sum < -max_sum)
                 neuron_sum = -max_sum;
 
             neuron_it->sum = neuron_sum;
@@ -404,8 +394,7 @@ FANN_EXTERNAL fann_type *FANN_API fann_run(struct fann * ann, fann_type * input)
     output = ann->output;
     num_output = ann->num_output;
     neurons = (ann->last_layer - 1)->first_neuron;
-    for(i = 0; i != num_output; i++)
-    {
+    for (i = 0; i != num_output; i++) {
         output[i] = neurons[i].value;
     }
     return ann->output;

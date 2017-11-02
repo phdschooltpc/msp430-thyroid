@@ -90,9 +90,6 @@ FANN_EXTERNAL void FANN_API fann_train(struct fann *ann, fann_type * input,
 #endif	/* NOT FIXEDFANN */
 
 FANN_EXTERNAL struct fann_train_data *FANN_API fann_create_tests_from_header();
-struct fann_train_data *fann_read_testdata_embfaan();
-struct fann_train_data *fann_read_train_XOR();
-struct fann *fann_create_embfann();
 /* Function: fann_test
    Test with a set of inputs, and a set of desired outputs.
    This operation updates the mean square error, but does not

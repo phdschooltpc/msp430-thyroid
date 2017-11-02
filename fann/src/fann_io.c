@@ -32,8 +32,6 @@
  */
 struct fann *fann_create_msp430()
 {
-    uint8_t num_layers = NUM_LAYERS;
-    uint8_t scale_included = SCALE_INCLUDED;
     uint8_t input_neuron;
     uint8_t i;
     uint8_t num_connections;
@@ -54,7 +52,7 @@ struct fann *fann_create_msp430()
     
     /* Allocate network. */
     // WARNING: dynamic allocation!
-    ann = fann_allocate_structure(num_layers);
+    ann = fann_allocate_structure((uint8_t) NUM_LAYERS);
     if(ann == NULL) {
         return NULL;
     }
@@ -87,8 +85,6 @@ struct fann *fann_create_msp430()
     ann->cascade_min_cand_epochs = CASCADE_MIN_CAND_EPOCHS;
     ann->cascade_num_candidate_groups = CASCADE_NUM_CANDIDATE_GROUPS;
     ann->bit_fail_limit = BIT_FAIL_LIMIT;
-    //Platform size limitation
-    //ann->cascade_candidate_limit = 8192000;
     ann->cascade_candidate_limit = CASCADE_CANDIDATE_LIMIT;
     ann->cascade_weight_multiplier = CASCADE_WEIGHT_MULTIPLIER;
 
@@ -99,7 +95,7 @@ struct fann *fann_create_msp430()
         ann->cascade_activation_functions_count * sizeof(enum fann_activationfunc_enum)
     );
     if (ann->cascade_activation_functions == NULL) {
-        //fann_error((struct fann_error*)ann, FANN_E_CANT_ALLOCATE_MEM);
+        // fann_error((struct fann_error*)ann, FANN_E_CANT_ALLOCATE_MEM);
         fann_destroy(ann);
         return NULL;
     }
@@ -121,7 +117,7 @@ struct fann *fann_create_msp430()
         CASCADE_ACTIVATION_FUNCTION_9, 
         CASCADE_ACTIVATION_FUNCTION_10
     };
-    
+
     for (i = 0; i < ann->cascade_activation_functions_count; i++) {
         ann->cascade_activation_functions[i] = (enum fann_activationfunc_enum) cascade_activation_functions[i];
     }
@@ -159,13 +155,13 @@ struct fann *fann_create_msp430()
 #endif // FIXEDFANN
 
 #ifdef DEBUG
-    printf("Creating network with %d layers\n", num_layers);
+    printf("Creating network with %d layers\n", NUM_LAYERS);
     printf("Input\n");
 #endif // DEBUG
-    
+
     i = 0;
 
-    for(layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++) {
+    for (layer_it = ann->first_layer; layer_it != ann->last_layer; layer_it++) {
 
         layer_size = layer_size_store[i++];
         if (layer_size == 0) {
@@ -208,7 +204,7 @@ struct fann *fann_create_msp430()
         } \
     }
 
-    if (scale_included == 1) {
+    if (SCALE_INCLUDED == 1) {
        fann_allocate_scale(ann);
        SCALE_LOAD( scale_mean,         in )
        SCALE_LOAD( scale_deviation,    in )
@@ -248,7 +244,7 @@ struct fann *fann_create_msp430()
 
     // WARNING: dynamic allocation!
     fann_allocate_connections(ann);
-    if(ann->errno_f == FANN_E_CANT_ALLOCATE_MEM) {
+    if (ann->errno_f == FANN_E_CANT_ALLOCATE_MEM) {
         fann_destroy(ann);
         return NULL;
     }
@@ -257,7 +253,7 @@ struct fann *fann_create_msp430()
     weights = ann->weights;
     first_neuron = ann->first_layer->first_neuron;
 
-    for(i = 0; i < ann->total_connections; i++) {
+    for (i = 0; i < ann->total_connections; i++) {
         input_neuron = connections[i][0];
         weights[i] = connections[i][1];
         connected_neurons[i] = first_neuron + input_neuron;

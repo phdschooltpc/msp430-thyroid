@@ -34,3 +34,14 @@ Have a look at the code, then:
 Note: some optimisations may lead to loss in accuracy (e.g. fixed- instead of floating-points), take it into account.
 
 <sup>1</sup>A sample taskified program will be provided soon. It will serve as a tutorial to use the intermittent-safe library we will provide you.
+
+### Known issues
+
+##### Compiler version
+The project was built and tested with the latest MSP430 compiler version (17.9.0). If you don't have it, please download it from CCS by going to `Help > Install New Software` and typing "Code Generation Tools Updates" in the search bar. On Linux distributions you may have to run CCS as a superuser, e.g. in Ubuntu
+```bash
+sudo /opt/ti/ccsv7/eclipse/ccstudio
+```
+
+##### Compiler flags
+When importing the CCS project, some systems may cut out some of the compiler flags needed to build this project without errors. To make sure all your compiler flags are set correctly, have a look at [this list](https://github.com/phdschooltpc/msp430-thyroid/list_of_compiler_flags.md) and compare it with your project's compiler settings in `Project > Properties > CCS Build`.

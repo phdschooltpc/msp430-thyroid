@@ -18,8 +18,6 @@
 #include "config.h"
 #include "fann.h"
 
-// #include "thyroid_test.h"
-
 
 /**
  * INTERNAL FUNCTION
@@ -27,31 +25,31 @@
  * Test data is created from constant values contained in 
  * database/<example>_test.h
  * where <example> is the subject example (e.g. xor, thyroid, etc.)
+ *
+ * WARNING: dynamically allocated test database! Do not use.
  */
-struct fann_train_data *fann_read_test_msp430()
-{
-    uint8_t i, j;
-    struct fann_train_data *data;
+// struct fann_train_data *fann_read_test_msp430()
+// {
+//     uint8_t i, j;
+//     struct fann_train_data *data;
 
-    /* Dynamically allocated test database. */
-
-    // data = fann_create_train(num_data, num_input, num_output);
-    // if(data == NULL) {
-    //     return NULL;
-    // }
+//     data = fann_create_train(num_data, num_input, num_output);
+//     if(data == NULL) {
+//         return NULL;
+//     }
     
-    // for(i = 0; i != num_data; i++) {
-    //     for(j = 0; j != num_input; j++) {
-    //         data->input[i][j] = input[i][j];
-    //     }
+//     for(i = 0; i != num_data; i++) {
+//         for(j = 0; j != num_input; j++) {
+//             data->input[i][j] = input[i][j];
+//         }
 
-    //     for(j = 0; j != num_output; j++) {
-    //         data->output[i][j] = output[i][j];
-    //     }
-    // }
+//         for(j = 0; j != num_output; j++) {
+//             data->output[i][j] = output[i][j];
+//         }
+//     }
 
-    return data;
-}
+//     return data;
+// }
 
 /*
  * Deallocates the train data structure.
@@ -137,7 +135,7 @@ FANN_EXTERNAL struct fann_train_data *FANN_API fann_create_tests_from_header()
 {
     struct fann_train_data *data;
 
-    data = fann_read_test_msp430();
+    // data = fann_read_test_msp430();
 
     return data;
 }

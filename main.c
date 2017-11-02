@@ -9,9 +9,7 @@
 #include "thyroid_test.h"
 #include "profiler.h"
 
-// TODO: add profiling facilities
 // TODO: remove unnecessary functions
-// TODO: try --data_model=full to fit more tests
 
 /* Debug variable. */
 fann_type *calc_out;
@@ -37,7 +35,7 @@ int main(void)
     CSCTL3 &= ~(DIVS | DIVM);
     CSCTL4 &= ~SMCLKOFF;
 
-	/* Fann structures. */
+	/* Fann structure. */
     struct fann *ann;
 
     uint32_t clk_cycles = 0;
