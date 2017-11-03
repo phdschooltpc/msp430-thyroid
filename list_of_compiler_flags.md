@@ -1,4 +1,4 @@
-### List of relevant compiler options
+## List of relevant compiler options
 
 ##### Compiler
 ```makefile
