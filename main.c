@@ -41,18 +41,33 @@ int main(void)
     uint32_t clk_cycles = 0;
     uint16_t i;
 
+#ifdef PROFILE
+    /* Start counting clock cycles. */
+    profiler_start();
+#endif // PROFILE
+
     /* Create network and read training data. */
     ann = fann_create_from_header();
     if (!ann) {
         return -1;
     }
 
+#ifdef PROFILE
+    /* Stop counting clock cycles. */
+    clk_cycles = profiler_stop();
+
+    /* Print profiling. */
+    printf("ANN initialisation:\n"
+           "-> execution cycles = %lu\n"
+           "-> execution time = %.3f ms\n\n",
+           clk_cycles, (float) clk_cycles / 8000);
+#endif // PROFILE
+
     /* Reset Mean Square Error. */
     fann_reset_MSE(ann);
 
 #ifdef PROFILE
     /* Start counting clock cycles. */
-    __enable_interrupt();
     profiler_start();
 #endif // PROFILE
 
@@ -83,9 +98,9 @@ int main(void)
     clk_cycles = profiler_stop();
 
     /* Print profiling. */
-    printf("Run %u tests.\n"
-           "-> execution cycles: total = %lu, per-test = %lu\n"
-           "-> execution time (ms): total = %.3f, per-test = %.3f\n\n",
+    printf("Run %u tests:\n"
+           "-> execution cycles = %lu (%lu per test)\n"
+           "-> execution time = %.3f ms (%.3f ms per test)\n\n",
            i,
            clk_cycles, clk_cycles / i,
            (float) clk_cycles / 8000, (float) clk_cycles / 8000 / i);

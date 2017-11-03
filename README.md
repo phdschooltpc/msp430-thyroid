@@ -2,11 +2,11 @@
 
 Machine learning example running on MSP430, _not_ intermittent-safe. It currently uses _floating-points_.
 
-### How to use
+## How to use
 
 Just clone/download the repository and import the project in CCS, build and run.
 
-### Program
+## Program
 
 The main function _dynamically_ allocates an Artificial Neural Network (ANN) using network parameters provided in `database/thyroid_trained.h`. This header file is constructed from `database/thyroid_trained.net`. If you are familiar with some machine learning concepts, you may try to tweak network parameters and re-train the network using [FANN](https://github.com/libfann/fann) (or just use the example in [`phdschooltpc/thyroid_example_FANN`](https://github.com/phdschooltpc/thyroid_example_FANN)). Grab the resulting `.net` file, put it inside the `database` folder and re-generate the header file using the provided script as follows:
 
@@ -24,7 +24,7 @@ cd database
 
 The `.test` file contains 3600 tests, which is the maximum value for `number_of_tests`. Currently, 250 tests are uploaded, on the FRAM, and run. The more tests, the more accurate the Mean Square Error (MSE) for the network. Nevertheless, the FRAM is limited in size, so all the 3600 tests will not fit. During the evaluation of your work, a fixed amount of tests will be run.
 
-### Suggestions
+## Suggestions
 
 Have a look at the code, then:
 
@@ -33,9 +33,9 @@ Have a look at the code, then:
 
 Note: some optimisations may lead to loss in accuracy (e.g. fixed- instead of floating-points), take it into account.
 
-<sup>1</sup>A sample taskified program will be provided soon. It will serve as a tutorial to use the intermittent-safe library we will provide you.
+<sup>1</sup>You can find a sample taskified program in [`phdschooltpc/msp430-intermittent-example`](https://github.com/phdschooltpc/msp430-intermittent-example). It serves as a tutorial to use the intermittent-safe library we provide you (the library is imported in this project as well, check the `utils` folder).
 
-### Known issues
+## Known issues
 
 #### Compiler version
 The project was built and tested with the latest MSP430 compiler version (17.9.0). If you don't have it, please download it from CCS by going to `Help > Install New Software` and typing "Code Generation Tools Updates" in the search bar. On Linux distributions you may have to run CCS as a superuser, e.g. in Ubuntu
