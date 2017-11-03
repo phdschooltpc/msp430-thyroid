@@ -33,7 +33,7 @@ Have a look at the code, then:
 
 Note: some optimisations may lead to loss in accuracy (e.g. fixed- instead of floating-points), take it into account.
 
-<sup>1</sup>You can find a sample taskified program in [`phdschooltpc/msp430-intermittent-example`](https://github.com/phdschooltpc/msp430-intermittent-example). It serves as a tutorial to use the intermittent-safe library we provide you (the library is imported in this project as well, check the `utils` folder).
+<sup>1</sup> You can find a sample taskified program in [`phdschooltpc/msp430-intermittent-example`](https://github.com/phdschooltpc/msp430-intermittent-example). It serves as a tutorial to use the intermittent-safe library we provide you (the library is imported in this project as well, check the `utils` folder).
 
 ## Known issues
 
