@@ -8,11 +8,13 @@
 #include "fann.h"
 #include "thyroid_test.h"
 #include "profiler.h"
-
-// TODO: remove unnecessary functions
+/*Intermittent Tester*/
+#include <tester.h>
+#include <noise.h>
 
 /* Debug variable. */
 fann_type *calc_out;
+static char string[] = "Hello! Hello! Hello! Hello! Hello! Hello! Hello! Hello! \n";
 
 /**
  * main.c
@@ -29,13 +31,18 @@ int main(void)
     P1OUT &= ~BIT0;
 
     /* Set master clock frequency to 8 MHz. */
-    CSCTL0 = CSKEY;
-    CSCTL1 &= ~DCOFSEL;
-    CSCTL1 |= DCOFSEL_6;
-    CSCTL3 &= ~(DIVS | DIVM);
-    CSCTL4 &= ~SMCLKOFF;
+//    CSCTL0 = CSKEY;
+//    CSCTL1 &= ~DCOFSEL;
+//    CSCTL1 |= DCOFSEL_6;
+//    CSCTL3 &= ~(DIVS | DIVM);
+//    CSCTL4 &= ~SMCLKOFF;
 
-	/* Fann structure. */
+    /*Power load simulation*/
+    /* You need to use these statements in the beginning your intermittent program*/
+    //tester_autoreset(0, noise_3, 0);
+    tester_notify_start();
+
+    /* Fann structure. */
     struct fann *ann;
 
     uint32_t clk_cycles = 0;
@@ -114,7 +121,12 @@ int main(void)
 
     __no_operation();
 
-    /* Turn on LED. */
+    /*Report results*/
+    /* You need to include that statement at the termination of your intermittent program*/
+    //tester_send_data(0, string, 57);
+
+    /* Turn on LED: Use for debugging */
+
     P1OUT |= BIT0;
 
     return 0;
